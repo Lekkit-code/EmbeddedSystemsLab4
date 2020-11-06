@@ -109,7 +109,10 @@ uint8_t eeprom_read_byte(uint8_t addr) {
 }
 
 void eeprom_write_byte(uint8_t addr, uint8_t data) {
-	// ...
+	i2c_start();
+	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_W);
+	i2c_xmit_byte(addr);
+	i2c_xmit_byte(data);
 }
 
 
