@@ -73,7 +73,7 @@ inline uint8_t i2c_get_status(void) {
 
 inline void i2c_xmit_addr(uint8_t address, uint8_t rw) {
 
-	TWDR = 0b10100000;
+	TWDR = (address & (0xF0)) | rw;
 	TWCR = (1 << TWINT) | (1 << TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 	i2c_meaningful_status(i2c_get_status());
@@ -94,7 +94,10 @@ inline uint8_t i2c_read_ACK() {
 }
 
 inline uint8_t i2c_read_NAK() {
-	// ...
+	while (!(TWCR & (1 << TWINT))) {};
+	TWCR = (1 << TWINT);
+	while (!(TWCR & (1 << TWINT))) {};
+	return TWDR;
 }
 
 inline void eeprom_wait_until_write_complete() {
