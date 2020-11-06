@@ -105,7 +105,14 @@ inline void eeprom_wait_until_write_complete() {
 }
 
 uint8_t eeprom_read_byte(uint8_t addr) {
-	// ...
+	i2c_start();
+	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_W);
+	i2c_xmit_byte(addr);
+	i2c_start();
+	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_R);
+	uint8_t data;
+	data = i2c_read_NACK();
+	i2c_stop();
 }
 
 void eeprom_write_byte(uint8_t addr, uint8_t data) {
