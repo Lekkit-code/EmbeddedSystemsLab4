@@ -57,53 +57,62 @@ void i2c_meaningful_status(uint8_t status) {
 	}
 }
 
-inline void i2c_start() {
+inline void i2c_start() //Sends the START command and waits for the transmit to complete.
+{
 	TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 }
 
-inline void i2c_stop() {
+inline void i2c_stop() //Sends the STOP command and waits for the transmit to complete.
+{
 	TWCR = (1 << TWINT)  | (1 << TWSTO) | (1 << TWEN);
 	while ((TWCR & (1 << TWSTO))) {};
 }
 
-inline uint8_t i2c_get_status(void) {
+inline uint8_t i2c_get_status(void) //Returns the status code.
+{
 	return ((TWSR & 0xF8));
 }
 
-inline void i2c_xmit_addr(uint8_t address, uint8_t rw) {
+inline void i2c_xmit_addr(uint8_t address, uint8_t rw) //Transmits the address to the EEPROM-chip and if we want to write or not. The chip we're using only use a control byte, so we send that.
+{
 
 	TWDR = (address & (0xF0)) | rw;
 	TWCR = (1 << TWINT) | (1 << TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 }
 
-inline void i2c_xmit_byte(uint8_t data) {
+inline void i2c_xmit_byte(uint8_t data) //Transmits a single byte and waits for the transmit to complete.
+{
 	TWDR = data;
 	TWCR = (1 << TWINT) | (1 << TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 }
 
-inline uint8_t i2c_read_ACK() {
+inline uint8_t i2c_read_ACK() //Reads a single byte and sends an ACK.
+{
 	TWCR = (1 << TWINT) | (1 << TWEA) | (1<<TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 	return TWDR;
 }
 
-inline uint8_t i2c_read_NAK() {
+inline uint8_t i2c_read_NAK() //Reads a single byte and sends NACK.
+{
 	TWCR = (1 << TWINT) | (1<<TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 	return TWDR;
 }
 
-inline void eeprom_wait_until_write_complete() {
+inline void eeprom_wait_until_write_complete() //Polls to see if the EEPROM is finished writing. Once it is, stops looping.
+{
 	while (i2c_get_status() != 0x18) {
 		i2c_start();
 		i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
 	}
 }
 
-uint8_t eeprom_read_byte(uint8_t addr) {
+uint8_t eeprom_read_byte(uint8_t addr) //Reads a single byte from the EEPROM. Initiates, sends the address we want to read and change to read mode. Then send STOP command and returns the read data.
+{
 	i2c_start();
 	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
 	i2c_xmit_byte(addr);
@@ -115,7 +124,8 @@ uint8_t eeprom_read_byte(uint8_t addr) {
 	return data;
 }
 
-void eeprom_write_byte(uint8_t addr, uint8_t data) {
+void eeprom_write_byte(uint8_t addr, uint8_t data) //Writes a single byte to a specified address in the EEPROM memory.
+{
 	i2c_start();
 	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
 	i2c_xmit_byte(addr);
@@ -125,7 +135,8 @@ void eeprom_write_byte(uint8_t addr, uint8_t data) {
 
 
 
-void eeprom_write_page(uint8_t addr, uint8_t *data) {
+void eeprom_write_page(uint8_t addr, uint8_t *data) //Writes a page (8 bytes) to the EEPROM memory at a given address.
+{
 	i2c_start();
 	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
 	i2c_xmit_byte(addr);
@@ -135,7 +146,8 @@ void eeprom_write_page(uint8_t addr, uint8_t *data) {
 	i2c_stop();
 }
 
-void eeprom_sequential_read(uint8_t *buf, uint8_t start_addr, uint8_t len) {
+void eeprom_sequential_read(uint8_t *buf, uint8_t start_addr, uint8_t len) //Reads from a given address of the EEPROM memory and for as long as you specify.
+{
 	i2c_start();
 	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
 	i2c_xmit_byte(start_addr);
