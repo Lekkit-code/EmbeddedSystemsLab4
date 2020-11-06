@@ -87,7 +87,10 @@ inline void i2c_xmit_byte(uint8_t data) {
 }
 
 inline uint8_t i2c_read_ACK() {
-	// ...
+	while (!(TWCR & (1 << TWINT))) {};
+	TWCR = (1 << TWINT) | (1 << TWEN);
+	while (!(TWCR & (1 << TWINT))) {};
+	return TWDR;
 }
 
 inline uint8_t i2c_read_NAK() {
