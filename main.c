@@ -17,15 +17,15 @@ int main (void) {
 
 	i2c_init();
 	uart_init();
-	char buf[32];
+	char buf[100];
 	sei();
 
 	while (1) {
-		eeprom_write_page(0x10, "Kettil");
+		eeprom_sequential_write(0x10, "EN LÅNG STRÄNG SOM JAG HOPPAS MYCKET PÅ! DET BORDE FUNKA!");
 		eeprom_wait_until_write_complete();
-		eeprom_sequential_read(buf, 0x10, 32);
+		eeprom_sequential_read(buf, 0x10, 100);
 		for (int i = 0; i < strlen(buf); i++) {
-			printf("%x", buf[i]);
+			printf("%c", buf[i]);
 		}
 		_delay_ms(100000);
 	}
