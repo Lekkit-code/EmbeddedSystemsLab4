@@ -58,7 +58,9 @@ void i2c_meaningful_status(uint8_t status) {
 }
 
 inline void i2c_start() {
-	// ...
+	TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
+	while (!(TWCR & (1 << TWINT))) {};
+	i2c_meaningful_status((TWSR & 0xF8));
 }
 
 inline void i2c_stop() {
