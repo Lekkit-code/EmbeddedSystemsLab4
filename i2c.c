@@ -88,14 +88,14 @@ inline void i2c_xmit_byte(uint8_t data) {
 
 inline uint8_t i2c_read_ACK() {
 	while (!(TWCR & (1 << TWINT))) {};
-	TWCR = (1 << TWINT) | (1 << TWEN);
+	TWCR = (1 << TWINT) | (1 << TWEA);
 	while (!(TWCR & (1 << TWINT))) {};
 	return TWDR;
 }
 
 inline uint8_t i2c_read_NAK() {
 	while (!(TWCR & (1 << TWINT))) {};
-	TWCR = (1 << TWINT);
+	TWCR = (1 << TWINT) | (1<<TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 	return TWDR;
 }
@@ -111,7 +111,7 @@ uint8_t eeprom_read_byte(uint8_t addr) {
 	i2c_start();
 	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_R);
 	uint8_t data;
-	data = i2c_read_NACK();
+	data = i2c_read_NAK();
 	i2c_stop();
 	return data;
 }
@@ -121,6 +121,7 @@ void eeprom_write_byte(uint8_t addr, uint8_t data) {
 	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_W);
 	i2c_xmit_byte(addr);
 	i2c_xmit_byte(data);
+	i2c_stop();
 }
 
 
