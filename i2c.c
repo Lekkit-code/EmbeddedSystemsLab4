@@ -136,5 +136,19 @@ void eeprom_write_page(uint8_t addr, uint8_t *data) {
 }
 
 void eeprom_sequential_read(uint8_t *buf, uint8_t start_addr, uint8_t len) {
-	// ... (VG)
+	i2c_start();
+	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
+	i2c_xmit_byte(start_addr);
+	i2c_start();
+	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_R);
+	
+	for (int i = 0; i < len; i++) {
+		if (i != len - 1) {
+			buf[i] = i2c_read_ACK();
+		}
+		else {
+			buf[i] = i2c_read_NAK();
+		}
+	}
+	i2c_stop();
 }
