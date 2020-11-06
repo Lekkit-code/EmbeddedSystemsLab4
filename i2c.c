@@ -64,6 +64,7 @@ inline void i2c_start() {
 
 inline void i2c_stop() {
 	TWCR = (1 << TWINT)  | (1 << TWSTO) | (1 << TWEN);
+	while ((TWCR & (1 << TWSTO))) {};
 }
 
 inline uint8_t i2c_get_status(void) {
@@ -84,26 +85,21 @@ inline void i2c_xmit_byte(uint8_t data) {
 }
 
 inline uint8_t i2c_read_ACK() {
-	while (!(TWCR & (1 << TWINT))) {};
-	TWCR = (1 << TWINT) | (1 << TWEA);
+	TWCR = (1 << TWINT) | (1 << TWEA) | (1<<TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 	return TWDR;
 }
 
 inline uint8_t i2c_read_NAK() {
-	while (!(TWCR & (1 << TWINT))) {};
 	TWCR = (1 << TWINT) | (1<<TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 	return TWDR;
 }
 
 inline void eeprom_wait_until_write_complete() {
-	while (1) {
+	while (i2c_get_status() != 0x18) {
 		i2c_start();
 		i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
-		if (i2c_get_status() == 0x18) {
-			break;
-		}
 	}
 }
 
