@@ -21,11 +21,13 @@ int main (void) {
 	sei();
 
 	while (1) {
-		eeprom_write_page(0x10, "KALAS!");
+		eeprom_write_page(0x10, "Kettil");
 		eeprom_wait_until_write_complete();
 		eeprom_sequential_read(buf, 0x10, 32);
-		printf("%x", buf);
-		_delay_ms(1000);
+		for (int i = 0; i < strlen(buf); i++) {
+			printf("%x", buf[i]);
+		}
+		_delay_ms(100000);
 	}
 	return 0;
 }
