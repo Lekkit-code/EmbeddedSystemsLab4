@@ -2,7 +2,7 @@
 #define _I2C_H_
 
 #define SCL_FREQ 100000 
-#define ADDRES_TO_EEPROM 0b10100000
+#define ADDRESS_TO_EEPROM 0b10100000
 
 // I2C Read/Write flags
 #define I2C_R	1
