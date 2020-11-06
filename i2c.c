@@ -113,6 +113,7 @@ uint8_t eeprom_read_byte(uint8_t addr) {
 	uint8_t data;
 	data = i2c_read_NACK();
 	i2c_stop();
+	return data;
 }
 
 void eeprom_write_byte(uint8_t addr, uint8_t data) {
