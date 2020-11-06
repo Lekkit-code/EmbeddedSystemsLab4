@@ -164,3 +164,23 @@ void eeprom_sequential_read(uint8_t *buf, uint8_t start_addr, uint8_t len) //Rea
 	}
 	i2c_stop();
 }
+
+void eeprom_sequential_write(uint8_t start_addr, uint8_t* data) {
+	uint8_t total_length_of_data;
+	total_length_of_data = strlen(data);
+	uint8_t number_of_pages;
+	number_of_pages = total_length_of_data / 8;
+	uint8_t number_of_single_bytes;
+	number_of_single_bytes = total_length_of_data % 8;
+	for (int i = 0; i < number_of_pages; i++) {
+		eeprom_write_page(start_addr, data);
+		start_addr += 8;
+		data += 8;
+		eeprom_wait_until_write_complete();
+	}
+	for (int i = 0; i < total_length_of_data; i++) {
+		uint8_t c = data[i];
+		eeprom_write_byte((start_addr+i), c);
+		eeprom_wait_until_write_complete();
+	}
+}
