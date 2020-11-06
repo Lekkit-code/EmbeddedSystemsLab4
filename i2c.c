@@ -8,7 +8,8 @@
 #include "i2c.h"
 
 
-void i2c_init(void) {
+void i2c_init(void) //Set the prescaler to 1 and writes our TWBR-value so we get our desired SCL_FREQUENCY.
+{
 	TWCR &= ~(1 << TWPS1) | ~(1 << TWPS0);
 	TWBR = ((F_CPU / SCL_FREQ -16) /2);
 }
