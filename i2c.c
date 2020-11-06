@@ -7,8 +7,10 @@
 
 #include "i2c.h"
 
+
 void i2c_init(void) {
-	// ...
+	TWCR &= ~(1 << TWPS1) | ~(1 << TWPS0);
+	TWBR = ((F_CPU / SCL_FREQ -16) /2);
 }
 
 void i2c_meaningful_status(uint8_t status) {
