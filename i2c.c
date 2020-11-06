@@ -64,7 +64,7 @@ inline void i2c_start() {
 }
 
 inline void i2c_stop() {
-	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
+	TWCR = (1 << TWINT)  | (1 << TWSTO) | (1 << TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
 	i2c_meaningful_status(i2c_get_status());
 }
@@ -74,6 +74,7 @@ inline uint8_t i2c_get_status(void) {
 }
 
 inline void i2c_xmit_addr(uint8_t address, uint8_t rw) {
+
 	TWDR = 0b10100000;
 	TWCR = (1 << TWINT) | (1 << TWEN);
 	while (!(TWCR & (1 << TWINT))) {};
@@ -81,7 +82,10 @@ inline void i2c_xmit_addr(uint8_t address, uint8_t rw) {
 }
 
 inline void i2c_xmit_byte(uint8_t data) {
-	// ...
+	TWDR = data;
+	TWCR = (1 << TWINT) | (1 << TWEN);
+	while (!(TWCR & (1 << TWINT))) {};
+	i2c_meaningful_status(i2c_get_status());
 }
 
 inline uint8_t i2c_read_ACK() {
