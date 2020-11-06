@@ -101,15 +101,21 @@ inline uint8_t i2c_read_NAK() {
 }
 
 inline void eeprom_wait_until_write_complete() {
-	// ...
+	while (1) {
+		i2c_start();
+		i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
+		if (i2c_get_status() == 0x18) {
+			break;
+		}
+	}
 }
 
 uint8_t eeprom_read_byte(uint8_t addr) {
 	i2c_start();
-	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_W);
+	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
 	i2c_xmit_byte(addr);
 	i2c_start();
-	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_R);
+	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_R);
 	uint8_t data;
 	data = i2c_read_NAK();
 	i2c_stop();
@@ -118,7 +124,7 @@ uint8_t eeprom_read_byte(uint8_t addr) {
 
 void eeprom_write_byte(uint8_t addr, uint8_t data) {
 	i2c_start();
-	i2c_xmit_addr(ADDRES_TO_EEPROM, I2C_W);
+	i2c_xmit_addr(ADDRESS_TO_EEPROM, I2C_W);
 	i2c_xmit_byte(addr);
 	i2c_xmit_byte(data);
 	i2c_stop();
