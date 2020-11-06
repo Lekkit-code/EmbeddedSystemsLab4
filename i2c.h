@@ -1,7 +1,7 @@
 #ifndef _I2C_H_
 #define _I2C_H_
 
-#define SCL_FREQ 10000 
+#define SCL_FREQ 100000 
 
 // I2C Read/Write flags
 #define I2C_R	1
