@@ -24,7 +24,7 @@ int main (void) {
 		eeprom_write_page(0x10, "KALAS!");
 		eeprom_wait_until_write_complete();
 		eeprom_sequential_read(buf, 0x10, 32);
-		printf("%s", buf);
+		printf("%x", buf);
 		_delay_ms(1000);
 	}
 	return 0;
