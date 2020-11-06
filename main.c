@@ -12,7 +12,7 @@
 #include "timer.h"
 
 
-void main (void) {
+int main (void) {
 
 	i2c_init();
 	uart_init();
@@ -22,5 +22,6 @@ void main (void) {
 	while (1) {
 
 	}
+	return 0;
 }
 
