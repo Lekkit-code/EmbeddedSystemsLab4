@@ -66,11 +66,11 @@ inline void i2c_start() {
 inline void i2c_stop() {
 	TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWSTO);
 	while (!(TWCR & (1 << TWINT))) {};
-	i2c_meaningful_status((TWSR & 0xF8));
+	i2c_meaningful_status(i2c_get_status());
 }
 
 inline uint8_t i2c_get_status(void) {
-	// ...
+	return ((TWSR & 0xF8));
 }
 
 inline void i2c_xmit_addr(uint8_t address, uint8_t rw) {
